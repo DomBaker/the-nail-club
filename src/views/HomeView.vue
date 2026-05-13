@@ -155,7 +155,6 @@
             </svg>
           </a>
         </div>
-        <p class="text-stone-600 text-xs">&copy; {{ new Date().getFullYear() }} The Nail Club. All rights reserved.</p>
       </div>
     </section>
   </div>
