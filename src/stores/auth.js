@@ -1,0 +1,72 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  updateProfile
+} from 'firebase/auth'
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
+import { auth, db, isConfigured } from '@/firebase/config'
+
+export const useAuthStore = defineStore('auth', () => {
+  const user = ref(null)
+  const userProfile = ref(null)
+  const loading = ref(true)
+
+  const isLoggedIn = computed(() => !!user.value)
+  const isAdmin = computed(() => userProfile.value?.role === 'admin')
+
+  async function fetchUserProfile(uid) {
+    const snap = await getDoc(doc(db, 'users', uid))
+    if (snap.exists()) {
+      userProfile.value = snap.data()
+    }
+  }
+
+  function init() {
+    if (!isConfigured) {
+      loading.value = false
+      return Promise.resolve()
+    }
+    return new Promise((resolve) => {
+      onAuthStateChanged(auth, async (firebaseUser) => {
+        user.value = firebaseUser
+        if (firebaseUser) {
+          await fetchUserProfile(firebaseUser.uid)
+        } else {
+          userProfile.value = null
+        }
+        loading.value = false
+        resolve()
+      })
+    })
+  }
+
+  async function register({ name, email, password, phone }) {
+    const credential = await createUserWithEmailAndPassword(auth, email, password)
+    await updateProfile(credential.user, { displayName: name })
+    await setDoc(doc(db, 'users', credential.user.uid), {
+      name,
+      email,
+      phone: phone || '',
+      role: 'customer',
+      createdAt: serverTimestamp()
+    })
+    userProfile.value = { name, email, phone: phone || '', role: 'customer' }
+  }
+
+  async function login({ email, password }) {
+    const credential = await signInWithEmailAndPassword(auth, email, password)
+    await fetchUserProfile(credential.user.uid)
+  }
+
+  async function logout() {
+    await signOut(auth)
+    user.value = null
+    userProfile.value = null
+  }
+
+  return { user, userProfile, loading, isLoggedIn, isAdmin, init, register, login, logout }
+})

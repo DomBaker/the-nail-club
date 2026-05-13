@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuth()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Users — any authenticated user can read/write their own doc; admins can read/write all
+    match /users/{userId} {
+      allow read, write: if isAuth() && request.auth.uid == userId;
+      allow read, write: if isAdmin();
+    }
+
+    // Services — public read, admin write
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Appointments — customers own their data, admins see all
+    // list (queries) allowed for any auth user so booking page can check taken slots
+    match /appointments/{appointmentId} {
+      allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
+      allow get: if isAuth() && resource.data.userId == request.auth.uid;
+      allow list: if isAuth();
+      allow update: if isAuth()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'cancelled'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow read, write: if isAdmin();
+    }
+
+    // Availability — auth read, admin write
+    match /availability/{date} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+
+    // Reviews — public read; auth create; admin update/delete
+    match /reviews/{reviewId} {
+      allow list, get: if true;
+      allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // Loyalty cards — customers read their own; only admins write (prevents self-stamping)
+    match /loyalty/{userId} {
+      allow read: if isAuth() && request.auth.uid == userId;
+      allow write: if isAdmin();
+    }
+  }
+}

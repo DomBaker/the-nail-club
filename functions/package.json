@@ -1,0 +1,11 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for The Nail Club",
+  "engines": { "node": "22" },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^6.0.0",
+    "stripe": "^17.0.0"
+  },
+  "private": true
+}
