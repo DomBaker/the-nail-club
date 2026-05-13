@@ -42,6 +42,20 @@ VITE_FIREBASE_APP_ID=your_app_id</pre>
 
       <!-- Bottom tab bar only in native app -->
       <MobileTabBar v-if="!authStore.loading && isNative" />
+
+      <!-- Messenger floating button (web only) -->
+      <a
+        v-if="!isNative"
+        href="https://m.me/1024022510799406"
+        target="_blank"
+        rel="noopener"
+        aria-label="Message us on Messenger"
+        class="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-[#D4769E] shadow-lg hover:bg-rose-500 transition-colors flex items-center justify-center"
+      >
+        <svg class="h-7 w-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.908 1.438 5.504 3.686 7.205V22l3.371-1.85c.9.249 1.853.384 2.943.384 5.523 0 10-4.145 10-9.291C22 6.145 17.523 2 12 2zm1.008 12.502l-2.548-2.718-4.976 2.718 5.474-5.808 2.61 2.718 4.913-2.718-5.473 5.808z"/>
+        </svg>
+      </a>
     </template>
   </div>
 </template>

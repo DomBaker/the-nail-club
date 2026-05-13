@@ -23,9 +23,9 @@
             <RouterLink to="/booking" class="inline-flex items-center gap-2 bg-white text-[#D4769E] font-semibold px-6 py-3 rounded-xl hover:bg-rose-50 transition-colors shadow-md">
               Book an appointment
             </RouterLink>
-            <a href="#services" class="inline-flex items-center gap-2 border-2 border-white/60 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/20 transition-colors">
+            <button @click="scrollToServices" class="inline-flex items-center gap-2 border-2 border-white/60 text-white font-semibold px-6 py-3 rounded-xl hover:bg-white/20 transition-colors">
               View services
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -177,6 +177,14 @@ onMounted(() => {
   servicesStore.fetchServices(true)
   reviewsStore.fetchApprovedReviews()
 })
+
+function scrollToServices() {
+  const el = document.getElementById('services')
+  if (!el) return
+  const offset = 72 // navbar height
+  const top = el.getBoundingClientRect().top + window.scrollY - offset
+  window.scrollTo({ top, behavior: 'smooth' })
+}
 
 function formatReviewDate(ts) {
   if (!ts) return ''
