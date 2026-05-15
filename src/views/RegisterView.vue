@@ -18,8 +18,12 @@
             <input v-model="form.email" type="email" class="input" placeholder="you@example.com" required />
           </div>
           <div>
-            <label class="label">Phone number <span class="text-stone-400 font-normal">(optional)</span></label>
-            <input v-model="form.phone" type="tel" class="input" placeholder="+1 (555) 000-0000" />
+            <label class="label">Mobile number</label>
+            <input v-model="form.phone" type="tel" class="input" placeholder="+44 7700 900000" required />
+          </div>
+          <div>
+            <label class="label">Date of birth</label>
+            <input v-model="form.dob" type="date" class="input" required :max="maxDob" />
           </div>
           <div>
             <label class="label">Password</label>
@@ -66,7 +70,9 @@ import AppSpinner from '@/components/ui/AppSpinner.vue'
 const authStore = useAuthStore()
 const router = useRouter()
 
-const form = ref({ name: '', email: '', phone: '', password: '' })
+const maxDob = new Date(Date.now() - 13 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+const form = ref({ name: '', email: '', phone: '', dob: '', password: '' })
 const error = ref('')
 const loading = ref(false)
 const googleLoading = ref(false)

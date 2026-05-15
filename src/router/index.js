@@ -59,6 +59,12 @@ const router = createRouter({
       meta: { requiresAdmin: true }
     },
     {
+      path: '/account',
+      name: 'account',
+      component: () => import('@/views/AccountView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/membership',
       name: 'membership',
       component: () => import('@/views/MembershipView.vue')

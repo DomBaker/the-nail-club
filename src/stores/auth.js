@@ -6,10 +6,11 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  deleteUser,
   signInWithPopup,
   GoogleAuthProvider
 } from 'firebase/auth'
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
+import { doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, db, isConfigured } from '@/firebase/config'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -46,17 +47,34 @@ export const useAuthStore = defineStore('auth', () => {
     })
   }
 
-  async function register({ name, email, password, phone }) {
+  async function register({ name, email, password, phone, dob }) {
     const credential = await createUserWithEmailAndPassword(auth, email, password)
     await updateProfile(credential.user, { displayName: name })
     await setDoc(doc(db, 'users', credential.user.uid), {
       name,
       email,
       phone: phone || '',
+      dob: dob || '',
       role: 'customer',
       createdAt: serverTimestamp()
     })
-    userProfile.value = { name, email, phone: phone || '', role: 'customer' }
+    userProfile.value = { name, email, phone: phone || '', dob: dob || '', role: 'customer' }
+  }
+
+  async function updateUserProfile({ name, phone, dob }) {
+    if (!user.value) return
+    const updates = { name, phone, dob }
+    await updateDoc(doc(db, 'users', user.value.uid), updates)
+    await updateProfile(user.value, { displayName: name })
+    userProfile.value = { ...userProfile.value, ...updates }
+  }
+
+  async function deleteAccount() {
+    if (!user.value) return
+    await deleteDoc(doc(db, 'users', user.value.uid))
+    await deleteUser(user.value)
+    user.value = null
+    userProfile.value = null
   }
 
   async function login({ email, password }) {
@@ -87,5 +105,5 @@ export const useAuthStore = defineStore('auth', () => {
     userProfile.value = null
   }
 
-  return { user, userProfile, loading, isLoggedIn, isAdmin, init, register, login, loginWithGoogle, logout }
+  return { user, userProfile, loading, isLoggedIn, isAdmin, init, register, login, loginWithGoogle, logout, updateUserProfile, deleteAccount }
 })

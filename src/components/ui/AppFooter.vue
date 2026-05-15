@@ -5,7 +5,10 @@
         <img src="/IMG_0046.jpg" alt="The Nail Club" class="h-10 w-10 rounded-full object-cover border-2 border-white/40" />
         <span class="font-display text-2xl text-white drop-shadow-sm">The Nail Club</span>
       </div>
-      <p class="text-sm text-white/70">© {{ new Date().getFullYear() }} The Nail Club. All rights reserved.</p>
+<div class="flex flex-col items-center sm:items-end gap-1">
+        <p class="text-sm text-white/70">© {{ new Date().getFullYear() }} The Nail Club. All rights reserved.</p>
+        <a href="https://built-by-baker.web.app" target="_blank" rel="noopener noreferrer" class="text-xs text-white/40 hover:text-white/70 transition-colors">Built by Baker</a>
+      </div>
     </div>
   </footer>
 </template>

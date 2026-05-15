@@ -15,6 +15,7 @@
         <template v-if="authStore.isLoggedIn">
           <RouterLink to="/booking" class="text-sm text-white/90 hover:text-white transition-colors font-medium">Book</RouterLink>
           <RouterLink to="/my-appointments" class="text-sm text-white/90 hover:text-white transition-colors font-medium">My Appointments</RouterLink>
+          <RouterLink to="/account" class="text-sm text-white/90 hover:text-white transition-colors font-medium">My Account</RouterLink>
           <RouterLink v-if="authStore.isAdmin" to="/admin" class="text-sm text-white/90 hover:text-white transition-colors font-medium">Admin</RouterLink>
           <button @click="handleLogout" class="btn-nav-outline text-sm">Sign out</button>
         </template>
@@ -43,6 +44,7 @@
       <template v-if="authStore.isLoggedIn">
         <RouterLink @click="mobileOpen = false" to="/booking" class="block text-sm text-white py-2.5 px-3 rounded-lg hover:bg-white/10">Book Appointment</RouterLink>
         <RouterLink @click="mobileOpen = false" to="/my-appointments" class="block text-sm text-white py-2.5 px-3 rounded-lg hover:bg-white/10">My Appointments</RouterLink>
+        <RouterLink @click="mobileOpen = false" to="/account" class="block text-sm text-white py-2.5 px-3 rounded-lg hover:bg-white/10">My Account</RouterLink>
         <RouterLink v-if="authStore.isAdmin" @click="mobileOpen = false" to="/admin" class="block text-sm text-white py-2.5 px-3 rounded-lg hover:bg-white/10">Admin Dashboard</RouterLink>
         <button @click="handleLogout" class="block text-sm text-white/70 py-2.5 px-3 w-full text-left hover:bg-white/10 rounded-lg">Sign out</button>
       </template>
